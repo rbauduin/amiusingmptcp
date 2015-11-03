@@ -53,7 +53,15 @@
 		$ip_hex = strtoupper($ip_hex);
 
 		// Return if you're connected via MPTCP!
-		return strpos(shell_exec("cat /proc/net/mptcp"), $ip_hex . ':' . $port_hex) ? true : false;
+		// Newer kernels use /proc/net/mptcp_net/mptcp
+	        if (file_exists("/proc/net/mptcp_net/mptcp")) {
+        	        $proc_file="/proc/net/mptcp_net/mptcp";
+        	}
+        	else {
+                	$proc_file="/proc/net/mptcp";
+	        }
+        	return strpos(shell_exec("cat $proc_file"),
+                	      $ip_hex.':'.$port_hex) ? true : false;
 	}
 
 	// OS 'enumerations'
